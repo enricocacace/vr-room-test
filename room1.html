@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Room 1 - VR Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <style>
+    #videoModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    #videoModal iframe {
+      width: 90vw;
+      height: 80vh;
+    }
+    #closeBtn {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 24px;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- A-Frame Scene -->
+  <a-scene>
+    <!-- 360-degree background -->
+    <a-sky src="room1-360.jpg" rotation="0 -90 0"></a-sky>
+
+    <!-- Hotspot: Play dramatization -->
+    <a-entity 
+      geometry="primitive: sphere; radius: 0.5"
+      material="color: red"
+      position="0 1.5 -3"
+      class="clickable"
+      event-set__enter="_event: mouseenter; scale: 1.2 1.2 1.2"
+      event-set__leave="_event: mouseleave; scale: 1 1 1"
+      onclick="showVideo()"
+    ></a-entity>
+
+    <!-- Camera with look-controls -->
+    <a-entity camera look-controls position="0 1.6 0"></a-entity>
+  </a-scene>
+
+  <!-- Video Modal -->
+  <div id="videoModal">
+    <span id="closeBtn" onclick="hideVideo()">✕</span>
+    <iframe id="dramaVideo" src="" frameborder="0" allowfullscreen></iframe>
+  </div>
+
+  <script>
+    function showVideo() {
+      document.getElementById('videoModal').style.display = 'flex';
+      const video = document.getElementById('dramaVideo');
+      video.src = "https://www.youtube.com/watch?v=iU0c4xz10QU"; // Replace VIDEO_ID with actual ID
+    }
+
+    function hideVideo() {
+      const video = document.getElementById('dramaVideo');
+      video.src = "";
+      document.getElementById('videoModal').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
+
