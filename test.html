@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gyroscope Test</title>
+</head>
+<body>
+<h1>Gyroscope Output:</h1>
+<pre id="output">Waiting...</pre>
+
+<script>
+  function update(event) {
+    document.getElementById('output').textContent =
+      `Alpha: ${event.alpha}\nBeta: ${event.beta}\nGamma: ${event.gamma}`;
+  }
+
+  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+    DeviceOrientationEvent.requestPermission()
+      .then(permissionState => {
+        if (permissionState === 'granted') {
+          window.addEventListener("deviceorientation", update, true);
+        } else {
+          document.getElementById('output').textContent = "Permission denied";
+        }
+      })
+      .catch(console.error);
+  } else {
+    window.addEventListener("deviceorientation", update, true);
+  }
+</script>
+</body>
+</html>
+
