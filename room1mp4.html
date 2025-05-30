@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Room 1 - 360° Video Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <style>
+    body { margin: 0; overflow: hidden; }
+  </style>
+</head>
+<body>
+
+<a-scene embedded>
+  <!-- 360° video sphere -->
+  <a-videosphere src="#roomVideo"></a-videosphere>
+
+  <!-- Camera with phone motion support -->
+  <a-entity camera look-controls position="0 1.6 0"></a-entity>
+</a-scene>
+
+<!-- Video element -->
+<video id="roomVideo" autoplay loop muted playsinline crossorigin="anonymous">
+  <source src="https://cdn.pixabay.com/vimeo/309832631/City_360degree_1080p.mp4?width=1280" type="video/mp4">
+</video>
+
+</body>
+</html>
+
