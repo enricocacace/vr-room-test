@@ -33,21 +33,31 @@
   </style>
 </head>
 <body>
-  <!-- A-Frame Scene -->
   <a-scene>
-    <!-- 360-degree background -->
+
+    <!-- 360° background -->
     <a-sky src="room1-360.jpg" rotation="0 -90 0"></a-sky>
 
-    <!-- Hotspot: Play dramatization (smaller, yellow, semi-transparent) -->
+    <!-- Interactive hotspot -->
     <a-entity 
+      id="hotspot"
       geometry="primitive: sphere; radius: 0.2"
       material="color: yellow; opacity: 0.5"
       position="0 1.5 -3"
-      onclick="showVideo()"
     ></a-entity>
 
-    <!-- Camera with look-controls -->
-    <a-entity camera look-controls position="0 1.6 0"></a-entity>
+    <!-- Camera with cursor for tapping -->
+    <a-entity id="cameraRig" position="0 1.6 0">
+      <a-camera look-controls>
+        <a-cursor 
+          id="cursor"
+          fuse="false"
+          raycaster="objects: .clickable"
+          material="opacity: 0; shader: flat">
+        </a-cursor>
+      </a-camera>
+    </a-entity>
+
   </a-scene>
 
   <!-- Video Modal -->
@@ -57,17 +67,23 @@
   </div>
 
   <script>
+    // Handle video opening
     function showVideo() {
       document.getElementById('videoModal').style.display = 'flex';
-      const video = document.getElementById('dramaVideo');
-      video.src = "https://www.youtube.com/embed/YOUTUBE_VIDEO_ID?autoplay=1"; // replace with actual video
+      document.getElementById('dramaVideo').src = "https://www.youtube.com/watch?v=g5daDzUKZXc";
     }
 
     function hideVideo() {
-      const video = document.getElementById('dramaVideo');
-      video.src = "";
       document.getElementById('videoModal').style.display = 'none';
+      document.getElementById('dramaVideo').src = "";
     }
+
+    // Attach click listener to hotspot
+    document.addEventListener('DOMContentLoaded', function () {
+      const hotspot = document.getElementById('hotspot');
+      hotspot.classList.add('clickable');
+      hotspot.addEventListener('click', showVideo);
+    });
   </script>
 </body>
 </html>
