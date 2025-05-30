@@ -23,43 +23,63 @@
 </head>
 <body>
 
-<!-- Button for iOS motion access -->
+<!-- Button to request gyroscope permission -->
 <button id="motionButton" onclick="requestMotion()">Enable Motion Control</button>
 
 <a-scene embedded>
-  <!-- 360° video sphere -->
   <a-videosphere src="#roomVideo"></a-videosphere>
-
-  <!-- Camera with look-controls -->
-  <a-entity id="camera" camera look-controls position="0 1.6 0"></a-entity>
+  <a-entity id="cameraRig">
+    <a-entity id="camera" camera look-controls wasd-controls-enabled="false" position="0 1.6 0"></a-entity>
+  </a-entity>
 </a-scene>
 
-<!-- Local video -->
+<!-- Video Source -->
 <video id="roomVideo" autoplay loop muted playsinline crossorigin="anonymous">
   <source src="256873_large.mp4" type="video/mp4">
 </video>
 
 <script>
-  // Prompt for motion access on iOS
-  function requestMotion() {
-    if (typeof DeviceMotionEvent.requestPermission === 'function') {
-      DeviceMotionEvent.requestPermission()
-        .then(response => {
-          if (response === 'granted') {
-            document.getElementById('motionButton').style.display = 'none';
-          }
-        })
-        .catch(console.error);
+  function enableLookControls() {
+    const scene = document.querySelector('a-scene');
+    const cameraEl = document.getElementById('camera');
+    const lookControls = cameraEl.components['look-controls'];
+
+    console.log('[DEBUG] Enabling look-controls...');
+    if (lookControls) {
+      lookControls.pause();
+      lookControls.play();
+      console.log('[DEBUG] look-controls resumed.');
+    } else {
+      console.warn('[DEBUG] look-controls not found.');
     }
   }
 
-  // Show the motion button only on iOS
+  function requestMotion() {
+    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+      DeviceMotionEvent.requestPermission().then(response => {
+        if (response === 'granted') {
+          document.getElementById('motionButton').style.display = 'none';
+          console.log('[DEBUG] Motion permission granted.');
+          enableLookControls();
+        } else {
+          console.warn('[DEBUG] Motion permission denied.');
+        }
+      }).catch(err => {
+        console.error('[DEBUG] Motion permission error:', err);
+      });
+    } else {
+      console.log('[DEBUG] No motion permission needed. Enabling controls.');
+      enableLookControls();
+    }
+  }
+
+  // Show the motion button only if permission is required
   window.addEventListener('load', () => {
-    if (
-      typeof DeviceMotionEvent !== 'undefined' &&
-      typeof DeviceMotionEvent.requestPermission === 'function'
-    ) {
+    if (typeof DeviceMotionEvent !== 'undefined' &&
+        typeof DeviceMotionEvent.requestPermission === 'function') {
       document.getElementById('motionButton').style.display = 'block';
+    } else {
+      enableLookControls();
     }
   });
 </script>
