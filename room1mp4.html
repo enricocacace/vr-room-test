@@ -1,75 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Room 1 – 360° Video Test</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <title>Room 1 – 360° Video</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <style>
     body { margin: 0; overflow: hidden; background: black; }
-    #motionButton {
+    #startButton {
       position: absolute;
-      top: 20px;
+      top: 40%;
       left: 50%;
-      transform: translateX(-50%);
-      padding: 10px 20px;
-      font-size: 16px;
-      z-index: 999;
-      background: #fff;
+      transform: translate(-50%, -50%);
+      padding: 16px 28px;
+      background: white;
+      border: none;
+      font-size: 18px;
       border-radius: 8px;
-      display: none;
+      z-index: 999;
     }
   </style>
 </head>
 <body>
 
-<button id="motionButton" onclick="requestMotion()">Enable Motion Control</button>
+<button id="startButton">Start Experience</button>
 
-<a-scene embedded>
+<a-scene>
   <a-videosphere src="#roomVideo"></a-videosphere>
-
-  <!-- No camera rig, direct camera -->
-  <a-entity 
-    id="mainCamera" 
-    camera 
-    look-controls="touchEnabled: true; magicWindowTrackingEnabled: true" 
-    position="0 1.6 0">
-  </a-entity>
+  <a-entity id="camera" camera look-controls position="0 1.6 0"></a-entity>
 </a-scene>
 
-<video id="roomVideo" autoplay loop muted playsinline crossorigin="anonymous">
+<!-- Your local video file -->
+<video id="roomVideo" playsinline loop muted crossorigin="anonymous">
   <source src="256873_large.mp4" type="video/mp4">
 </video>
 
 <script>
-  function requestMotion() {
-    if (
-      typeof DeviceMotionEvent !== 'undefined' &&
-      typeof DeviceMotionEvent.requestPermission === 'function'
-    ) {
+  const startBtn = document.getElementById('startButton');
+  const video = document.getElementById('roomVideo');
+
+  function enableExperience() {
+    // Start video playback
+    video.play().then(() => {
+      console.log('[DEBUG] Video started.');
+    }).catch((err) => {
+      console.error('[DEBUG] Video failed to start:', err);
+    });
+
+    // Enable gyroscope if iOS
+    if (typeof DeviceMotionEvent?.requestPermission === 'function') {
       DeviceMotionEvent.requestPermission()
         .then(response => {
           if (response === 'granted') {
-            document.getElementById('motionButton').style.display = 'none';
             console.log('[DEBUG] Motion permission granted.');
-            const cam = document.getElementById('mainCamera');
+            const cam = document.getElementById('camera');
             cam.components['look-controls'].play();
           }
         })
-        .catch(err => {
-          console.error('[DEBUG] Motion request error:', err);
-        });
+        .catch(console.error);
     }
+
+    startBtn.style.display = 'none';
   }
 
-  window.addEventListener('load', () => {
-    if (
-      typeof DeviceMotionEvent !== 'undefined' &&
-      typeof DeviceMotionEvent.requestPermission === 'function'
-    ) {
-      document.getElementById('motionButton').style.display = 'block';
-    }
-  });
+  startBtn.addEventListener('click', enableExperience);
 </script>
 
 </body>
